@@ -127,51 +127,32 @@ class Semantic_Loss(nn.Module):
 def Int_Loss(fused_image, vis_image, inf_image, w1_vis):
 
     loss_Int: object = F.l1_loss(fused_image,inf_image) + w1_vis * F.l1_loss(fused_image, vis_image)
-    # loss_Int: object = F.l1_loss(fused_image, torch.max(inf_image, vis_image))
     return loss_Int
 
 
 def gradinet_Loss(fused_image, vis_image, inf_image):
-    # w2_ev = (w2_ir + w2_vis) /2
-    # gradinet_loss = F.l1_loss(w2_ev * gradient(fused_image), torch.max(w2_ir * gradient(inf_image), w2_vis * gradient(vis_image)))
+   
     gradinet_loss = F.l1_loss(gradient(fused_image), torch.max(gradient(inf_image), gradient(vis_image)))
 
     return gradinet_loss
 
 def SSIM_Loss(fuse_image, vis_image, inf_image):
-    # # ssim_loss = pytorch_msssim.ms_ssim
-    # gradient_vis = gradient(vis_image)
-    # gradient_ir = gradient(inf_image)
-    # weight_A = torch.mean(gradient_vis) / (torch.mean(gradient_vis) + torch.mean(gradient_ir))
-    # weight_B = torch.mean(gradient_ir) / (torch.mean(gradient_vis) + torch.mean(gradient_ir))
-    # loss_out = weight_A * ssim_loss(vis_image, fuse_image) + weight_B * ssim_loss(inf_image, fuse_image)
-    # gradient_vis = gradient(vis_image)
-    # gradient_ir = gradient(inf_image)
-    # weight_A = torch.mean(gradient_vis) / (torch.mean(gradient_vis) + torch.mean(gradient_ir))
-    # weight_B = torch.mean(gradient_ir) / (torch.mean(gradient_vis) + torch.mean(gradient_ir))
+
     weight_A = weight_B = 0.5
     loss_out = weight_A * ssim(vis_image, fuse_image) + weight_B * ssim(inf_image, fuse_image) 
     return loss_out
 
 def draw_features(width, height, x):
-    # fig = plt.figure(figsize=(16, 16))
-    # fig.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.95, wspace=0.05, hspace=0.05)
-    # for i in range(128):
-        # plt.subplot(height, width, i + 1)
-        # plt.axis('off')
+ 
         img = x[0, 0, :, :]
         pmin = np.min(img)
         pmax = np.max(img)
-        img = ((img - pmin) / (pmax - pmin + 0.000001)) * 255  # float在[0，1]之间，转换成0-255
-        img = img.astype(np.uint8)  # 转成unit8
-        img = cv2.applyColorMap(img, cv2.COLORMAP_JET)  # 生成heat map
-        img = img[:, :, ::-1]  # 注意cv2（BGR）和matplotlib(RGB)通道是相反的
+        img = ((img - pmin) / (pmax - pmin + 0.000001)) * 255  
+        img = img.astype(np.uint8)  
+        img = cv2.applyColorMap(img, cv2.COLORMAP_JET)  
+        img = img[:, :, ::-1]  
         plt.imshow(img)
-        # plt.show()
-        # print("{}/{}".format(i, width * height))
-    # fig.savefig(savename, dpi=100)
-    # fig.clf()
-    #     plt.close()
+ 
 
 def Tensor_to_img(feature_map):
     feature_map = feature_map.cpu().detach().numpy()
@@ -182,7 +163,6 @@ def Tensor_to_img(feature_map):
 
 def draw_cnn(feature_map, model):
     im = Tensor_to_img(feature_map)
-    # plt.imshow(im[:, :,0], cmap='viridis')
     plt.imshow(im[:, :, 0], cmap=model)
 
 
@@ -196,8 +176,6 @@ def disp_feature_image(im, model, x, y, title):
         draw_features(128, 128, im)
     plt.axis('off')
     plt.title(title, fontsize=12, y=-0.12)
-    # plt.tight_layout()
-    # plt.subplots_adjust(top=1, bottom=0.07, left=0, right=1, hspace=0.12, wspace=0)
     plt.subplots_adjust(top=1, bottom=0.07, left=0, right=1, hspace=0.12, wspace=0.02)
     plt.margins(0, 0)
 
@@ -211,15 +189,14 @@ def disp_image(im, model, x, y):
         draw_features(128, 128, im)
     plt.axis('off')
     plt.tight_layout()
-    # plt.subplots_adjust(top=1, bottom=0.07, left=0, right=1, hspace=0.12, wspace=0)
+ 
     plt.margins(0, 0)
     plt.show()
 
 def build_schedule(start, epoch, x):
     if epoch < x:
-        # 在前100个epoch，每20个epoch学习率乘以0.1
-        return start * (0.1 ** (epoch // 20))  # 每20个epoch乘以0.1
+
+        return start * (0.1 ** (epoch // 20))  
     else:
-        # 在100个epoch之后，学习率变成0.001，每10个epoch乘以0.1
-        return 0.001 * (0.1 ** ((epoch - 100) // 10))  # 每10个epoch乘以0.1
+        return 0.001 * (0.1 ** ((epoch - 100) // 10))
 
