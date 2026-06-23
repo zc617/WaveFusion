@@ -7,14 +7,7 @@ from uitils import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# torch.cuda.set_device(0)
 
-
-# /data1/cc/data/M3FD_test/
-# /data1/cc/data/TNO_test/
-# /data1/cc/data/RoadScene_test/
-# /data1/cc/data/LLVIP_test/
-#/data1/cc/data/MSRS_test/
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--infrared_dataroot", default="./test/ir/", type=str)
@@ -59,7 +52,7 @@ if __name__ == "__main__":
             vis_y_image, vis_cb_image, vis_cr_image = RGB2YCrCb(visible)
             vis_y_image = vis_y_image.to(device)
             vis_cb_image = vis_cb_image.to(device)
-            vis_cr_image = vis_cr_image.to(device)   # show color
+            vis_cr_image = vis_cr_image.to(device)  
             visible = visible.squeeze(0)
             _, h_old, w_old = visible.size()
             h_pad = (h_old // patch_size + 1) * patch_size - h_old

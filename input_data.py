@@ -70,7 +70,7 @@ class ImageDataset(Dataset):
 
 
 if __name__ == "__main__":
-    date_root="/data/infrared/cc/data/MSRS-main/train/"
+    date_root="./MSRS-main/train/"
     image = ImageDataset(date_root,[256,256])
     print('data lens', len(image))
     dataloader = torch.utils.data.DataLoader(image, batch_size=1)

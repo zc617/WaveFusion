@@ -21,13 +21,11 @@ plt.rcParams['font.sans-serif'] = ['Times New Roman']
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_root", default="/mnt/disk/ch/data/MSRS-main/train/", type=str)
 parser.add_argument("--batch_size", type=int, default=16)
-parser.add_argument("--image_size", type=int, default=(128, 128)) # 64 * 64 测试
+parser.add_argument("--image_size", type=int, default=(128, 128)) 
 parser.add_argument("--epoch", type=int, default=150)
 parser.add_argument("--lr", type=float, default=0.001)
 parser.add_argument("--checkpoint_dir", type=str, default="checkpoints/")
 parser.add_argument('--loss_weight', default='[1, 10, 0.1, 1]', type=str,metavar='N', help='loss weight')
-   #  2 10 3
-# Loss_ssim = kornia.losses.SSIM(11, reduction='mean')
 
 
 if __name__ == "__main__":
